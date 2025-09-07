@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verkury profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+        }
+
+        #canvas {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: transparent;
+        }
+
+        .main-container,
+        .time-container,
+        .weather-container,
+        .links-container,
+        .projects-container {
+            background: rgba(19, 19, 19, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 500px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid transparent;
+            padding: 4px;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            background-clip: padding-box;
+            box-shadow: 0 0 15px rgba(67, 206, 162, 0.5);
+        }
+
+        .name {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            animation: shimmer 3s linear infinite;
+            text-shadow: 0 0 10px rgba(67, 206, 162, 0.5);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .about-title,
+        .links-title {
+            font-size: 22px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .about-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #d0d0e0;
+        }
+
+        #lang-switch {
+            background: rgba(67, 206, 162, 0.2);
+            color: #fff;
+            border: 1px solid #43cea2;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #lang-switch:hover {
+            background: rgba(67, 206, 162, 0.4);
+        }
+
+        .time-container,
+        .weather-container {
+            text-align: center;
+        }
+
+        .time,
+        .temperature {
+            font-size: 54px;
+            font-weight: 900;
+            display: block;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(67, 206, 162, 0.3);
+        }
+
+        .date,
+        .weather-desc {
+            font-size: 18px;
+            color: #a0a0c0;
+        }
+
+        .links-container {
+            text-align: center;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: rgba(67, 206, 162, 0.1);
+            border-radius: 10px;
+            color: #d0d0e0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(67, 206, 162, 0.2);
+        }
+
+        .link-item:hover {
+            background: rgba(67, 206, 162, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .projects-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .project {
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .project-header {
+            width: 100%;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .project-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            width: 100%;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            max-width: 65px;
+            margin: 10px 0;
+        }
+
+        .status.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .description {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #b0b0d0;
+        }
+
+        .weather-loading {
+            font-size: 16px;
+            color: #a0a0c0;
+        }
+
+        .weather-error {
+            color: #f5576c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (min-width: 1024px) {
+            .project:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                background: rgba(40, 40, 50, 0.7);
+            }
+            
+            .main-container:hover,
+            .time-container:hover,
+            .weather-container:hover,
+            .links-container:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .links-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .projects-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="logo-container">
+            <img class="logo" src="Ava_box.png" alt="Load erorr">
+        </div>
+        <h1 class="name">Verkury</h1>
+        <p class="about-title">Обо мне:</p>
+        <h5 class="about-text">Программист из Барнаула. Студент колледжа АГУ. И не только...</h5>
+        <button type="button" id="lang-switch">EN</button>
+    </div>
+    
+    <div class="time-container">
+        <div>
+            <span class="time">08:35:06</span>
+        </div>
+        <span class="date">Вс, 7 сентября</span>
+    </div>
+    
+    <div class="weather-container">
+        <div>
+            <span class="temperature">--°C</span>
+        </div>
+        <span class="weather-desc">Загрузка погоды...</span>
+        <div class="weather-error" style="display: none;"></div>
+    </div>
+    
+    <div class="links-container">
+        <span class="links-title">Ссылки</span>
+        <div class="links-grid">
+            <a href="https://github.com/Verkury" target="_blank" class="link-item">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="https://t.me/Ver_kury" target="_blank" class="link-item">
+                <i class="fab fa-telegram"></i> Telegram
+            </a>
+            <a href="https://discord.com/users/Verkury" target="_blank" class="link-item">
+                <i class="fab fa-discord"></i> Discord
+            </a>
+        </div>
+    </div>
+    
+    <div class="projects-container">
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">FlyNesty</span>
+            </div>
+            <p class="status active">Active</p>
+            <p class="description">Небольшое шуточное онлайн казино</p>
+        </div>
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">TheUltimateGuide</span>
+            </div>
+            <p class="status active">Active</p>
+            <p class="description">Гайд по программированию с 0 до первой работы</p>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            const config = {
+                pointCount: 175,
+                pointRadius: 3,
+                pointColor: 'rgba(255, 255, 255, 0.7)',
+                lineColor: 'rgba(100, 100, 255, 0.2)',
+                lineDistance: 150,
+                speed: 4
+            };
+            
+            const points = [];
+            for (let i = 0; i < config.pointCount; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * config.speed,
+                    vy: (Math.random() - 0.5) * config.speed
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < points.length; i++) {
+                    const p = points[i];
+                    
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    
+                    p.x = Math.max(0, Math.min(canvas.width, p.x));
+                    p.y = Math.max(0, Math.min(canvas.height, p.y));
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, config.pointRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = config.pointColor;
+                    ctx.fill();
+                }
+                
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const p1 = points[i];
+                        const p2 = points[j];
+                        
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < config.lineDistance) {
+                            const opacity = 1 - distance / config.lineDistance;
+                            ctx.strokeStyle = `rgba(100, 100, 255, ${opacity * 0.2})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+
+            function updateDateTime() {
+                const now = new Date();
+                
+                const timeElem = document.querySelector('.time');
+                timeElem.textContent = now.toLocaleTimeString('ru-RU');
+                
+                const dateElem = document.querySelector('.date');
+                const options = { weekday: 'short', day: 'numeric', month: 'long' };
+                dateElem.textContent = now.toLocaleDateString('ru-RU', options);
+            }
+            
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+
+            async function fetchWeather() {
+                const temperatureElem = document.querySelector('.temperature');
+                const weatherDescElem = document.querySelector('.weather-desc');
+                const weatherErrorElem = document.querySelector('.weather-error');
+                
+                weatherErrorElem.style.display = 'none';
+                
+                try {
+                    const API_KEY = '7d6f20b0ca844e999b825928250709';
+                    const CITY = 'Barnaul';
+                    const URL = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}&lang=ru`;
+                    
+                    const response = await fetch(URL);
+                    
+                    if (!response.ok) {
+                        throw new Error('Ошибка получения данных о погоде');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    const temperature = Math.round(data.current.temp_c);
+                    const description = data.current.condition.text;
+                    const city = data.location.name;
+                    
+                    temperatureElem.textContent = `${temperature}°C`;
+                    weatherDescElem.textContent = `${description}, ${city}`;
+                    
+                } catch (error) {
+                    console.error('Ошибка при получении погоды:', error);
+                    temperatureElem.textContent = '--°C';
+                    weatherDescElem.textContent = 'Не удалось загрузить погоду';
+                    weatherErrorElem.textContent = 'Для отображения погоды нужен API ключ от WeatherAPI';
+                    weatherErrorElem.style.display = 'block';
+                }
+            }
+            
+            fetchWeather();
+            
+            setInterval(fetchWeather, 30 * 60 * 1000);
+
+            const langSwitch = document.getElementById('lang-switch');
+            let isEnglish = false;
+            
+            const translations = {
+                ru: {
+                    about: "Обо мне:",
+                    aboutText: "Программист из Барнаула. Студент колледжа АГУ. И не только...",
+                    links: "Ссылки",
+                    flyNestyDesc: "Небольшое шуточное онлайн казино",
+                    guideDesc: "Гайд по программированию с 0 до работы",
+                    active: "Active",
+                    weatherLoading: "Загрузка погоды...",
+                    weatherError: "Не удалось загрузить погоду",
+                    apiError: "Для отображения погоды нужен API ключ от OpenWeatherMap"
+                },
+                en: {
+                    about: "About me:",
+                    aboutText: "Programmer from Barnaul. ASU college student. And more...",
+                    links: "Links",
+                    flyNestyDesc: "A small humorous online casino",
+                    guideDesc: "Programming guide from zero to professional",
+                    active: "Active",
+                    weatherLoading: "Loading weather...",
+                    weatherError: "Failed to load weather",
+                    apiError: "You need an OpenWeatherMap API key to display weather"
+                }
+            };
+            
+            langSwitch.addEventListener('click', function() {
+                isEnglish = !isEnglish;
+                this.textContent = isEnglish ? 'RU' : 'EN';
+                
+                const lang = isEnglish ? 'en' : 'ru';
+                
+                document.querySelector('.about-title').textContent = translations[lang].about;
+                document.querySelector('.about-text').textContent = translations[lang].aboutText;
+                document.querySelector('.links-title').textContent = translations[lang].links;
+                document.querySelectorAll('.description')[0].textContent = translations[lang].flyNestyDesc;
+                document.querySelectorAll('.description')[1].textContent = translations[lang].guideDesc;
+                
+                const weatherErrorElem = document.querySelector('.weather-error');
+                if (weatherErrorElem.style.display === 'block') {
+                    weatherErrorElem.textContent = translations[lang].apiError;
+                }
+                
+                const now = new Date();
+                const dateElem = document.querySelector('.date');
+                if (isEnglish) {
+                    const options = { weekday: 'short', day: 'numeric', month: 'long' };
+                    dateElem.textContent = now.toLocaleDateString('en-US', options);
+                } else {
+                    const options = { weekday: 'short', day: 'numeric', month: 'long' };
+                    dateElem.textContent = now.toLocaleDateString('ru-RU', options);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
