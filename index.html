@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verkury profile</title>
+    <title>Verkury</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -231,15 +231,32 @@
             color: #b0b0d0;
         }
 
-        .weather-loading {
-            font-size: 16px;
-            color: #a0a0c0;
-        }
-
         .weather-error {
             color: #f5576c;
             font-size: 14px;
             margin-top: 5px;
+        }
+
+        .api-instructions {
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #b0b0d0;
+        }
+
+        .api-instructions h4 {
+            margin-bottom: 8px;
+            color: #43cea2;
+        }
+
+        .api-instructions ol {
+            padding-left: 20px;
+        }
+
+        .api-instructions li {
+            margin-bottom: 5px;
         }
 
         @media (min-width: 1024px) {
@@ -293,6 +310,14 @@
         </div>
         <span class="weather-desc">Загрузка погоды...</span>
         <div class="weather-error" style="display: none;"></div>
+        <div class="api-instructions" style="display: none;">
+            <h4>Инструкция по настройке WeatherAPI:</h4>
+            <ol>
+                <li>Получите API ключ на weatherapi.com</li>
+                <li>Замените "ВАШ_API_КЛЮЧ" в коде на ваш ключ</li>
+                <li>Сохраните изменения и перезагрузите страницу</li>
+            </ol>
+        </div>
     </div>
     
     <div class="links-container">
@@ -426,13 +451,16 @@
                 const temperatureElem = document.querySelector('.temperature');
                 const weatherDescElem = document.querySelector('.weather-desc');
                 const weatherErrorElem = document.querySelector('.weather-error');
+                const apiInstructions = document.querySelector('.api-instructions');
                 
                 weatherErrorElem.style.display = 'none';
+                apiInstructions.style.display = 'none';
                 
                 try {
-                    const API_KEY = '7d6f20b0ca844e999b825928250709';
+                    const API_KEY = '7d6f20b0ca844e999b825928250709'; 
+                    
                     const CITY = 'Barnaul';
-                    const URL = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}&lang=ru`;
+                    const URL = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CITY}&lang=ru`;
                     
                     const response = await fetch(URL);
                     
@@ -451,9 +479,18 @@
                     
                 } catch (error) {
                     console.error('Ошибка при получении погоды:', error);
-                    temperatureElem.textContent = '--°C';
-                    weatherDescElem.textContent = 'Не удалось загрузить погоду';
-                    weatherErrorElem.textContent = 'Для отображения погоды нужен API ключ от WeatherAPI';
+                    
+                    if (error.message === 'API_KEY_NOT_SET') {
+                        temperatureElem.textContent = '--°C';
+                        weatherDescElem.textContent = 'API ключ не настроен';
+                        weatherErrorElem.textContent = 'Необходимо настроить API ключ для отображения погоды';
+                        apiInstructions.style.display = 'block';
+                    } else {
+                        temperatureElem.textContent = '--°C';
+                        weatherDescElem.textContent = 'Ошибка загрузки';
+                        weatherErrorElem.textContent = 'Проверьте API ключ и подключение к интернету';
+                    }
+                    
                     weatherErrorElem.style.display = 'block';
                 }
             }
@@ -474,8 +511,9 @@
                     guideDesc: "Гайд по программированию с 0 до работы",
                     active: "Active",
                     weatherLoading: "Загрузка погоды...",
-                    weatherError: "Не удалось загрузить погоду",
-                    apiError: "Для отображения погоды нужен API ключ от OpenWeatherMap"
+                    weatherError: "Ошибка загрузки погоды",
+                    apiError: "Необходимо настроить API ключ для отображения погоды",
+                    apiInstructions: "Инструкция по настройке WeatherAPI:"
                 },
                 en: {
                     about: "About me:",
@@ -485,8 +523,9 @@
                     guideDesc: "Programming guide from zero to professional",
                     active: "Active",
                     weatherLoading: "Loading weather...",
-                    weatherError: "Failed to load weather",
-                    apiError: "You need an OpenWeatherMap API key to display weather"
+                    weatherError: "Weather loading error",
+                    apiError: "You need to set up an API key to display weather",
+                    apiInstructions: "WeatherAPI setup instructions:"
                 }
             };
             
@@ -503,8 +542,12 @@
                 document.querySelectorAll('.description')[1].textContent = translations[lang].guideDesc;
                 
                 const weatherErrorElem = document.querySelector('.weather-error');
+                const apiInstructions = document.querySelector('.api-instructions');
+                const apiTitle = apiInstructions.querySelector('h4');
+                
                 if (weatherErrorElem.style.display === 'block') {
                     weatherErrorElem.textContent = translations[lang].apiError;
+                    apiTitle.textContent = translations[lang].apiInstructions;
                 }
                 
                 const now = new Date();
