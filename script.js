@@ -83,7 +83,7 @@ const translations = {
         about_text: "Специализируюсь на создании эффективных бэкенд-систем и CLI утилит. Упрощаю сложные процессы через код.",
         stack_title: "Технологический Стек",
         projects_title: "Проекты",
-        status_queue: "Очередь",
+        status_queue: "В очереди",
         status_dev: "В работе",
         status_paused: "На паузе",
         desc_typogo: "Тренер слепой печати в терминале.",
