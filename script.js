@@ -90,6 +90,7 @@ const translations = {
         desc_schedule: "Telegram бот с расписанием колледжа.",
         desc_mst: "Алгоритм шифрования.",
         desc_here: "Браузерное расширение для обхода контроля посещаемости.",
+        desc_engine: "Небольшой простой консольный движок",
         btn_text: "EN"
     },
     en: {
@@ -104,6 +105,7 @@ const translations = {
         desc_schedule: "Telegram bot for college schedule.",
         desc_mst: "Encryption algorithm.",
         desc_here: "Browser extension to bypass attendance checks.",
+        desc_engine: "A small, simple console engine",
         btn_text: "RU"
     }
 };
